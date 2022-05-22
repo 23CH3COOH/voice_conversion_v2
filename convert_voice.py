@@ -36,7 +36,6 @@ def convert_frame(x, gmm, gauss, ss, m, K):
 
 def convert_mcep(mcep, gmm, m, K):
     d = m + 1
-    print(mcep.shape)
     res = np.full(mcep.shape, np.nan)
 
     # 式(9)の多次元正規分布のオブジェクトを作成しておく
@@ -59,7 +58,8 @@ def convert_mcep(mcep, gmm, m, K):
     return res
 
 def convert_voice(wav_path_from, wav_path_to, gmm_path, m, a, K, FFT_SIZE):
-    fs, f0, sp, ap = world.extract_f0_sp_ap(wav_path_from, FFT_SIZE, True)
+    fs, data = wavfile.read(wav_path_from)
+    f0, sp, ap = world.extract_f0_sp_ap(fs, data, FFT_SIZE)
     mcep = pysptk.sp2mc(sp, order=m, alpha=a)
     mcep_to = convert_mcep(mcep, joblib.load(gmm_path), m, K)
     sp_to = pysptk.mc2sp(mcep_to, alpha=a, fftlen=FFT_SIZE)
@@ -83,4 +83,4 @@ def main(conv_from, conv_to):
 
 
 if __name__ == '__main__':
-    main('clb', 'slt')
+    main('', '')

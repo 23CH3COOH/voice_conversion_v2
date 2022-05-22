@@ -1,19 +1,15 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pysptk
-import pyworld
 from glob import glob
 from scipy.io import wavfile
+import world
 
 
 def resynthesis(wav_path, m, a, FFT_SIZE):
     print('Extracting by WORLD...')
     fs, data = wavfile.read(wav_path)
-    data = data.astype(np.float)
-    _f0, time = pyworld.dio(data, fs)
-    f0 = pyworld.stonemask(data, _f0, time, fs)
-    sp = pyworld.cheaptrick(data, f0, time, fs, fft_size=FFT_SIZE)
-    ap = pyworld.d4c(data, _f0, time, fs, fft_size=FFT_SIZE)
+    f0, sp, ap = world.extract_f0_sp_ap(fs, data, FFT_SIZE)
     print(f0.shape, sp.shape, ap.shape)
 
     print('Converting spectral envelope to mel cepstrum...')
@@ -25,8 +21,7 @@ def resynthesis(wav_path, m, a, FFT_SIZE):
     print(spectral_env_array.shape)
 
     print('Synthesizing...')
-    synthesized = pyworld.synthesize(f0, spectral_env_array, ap, fs)
-    synthesized = synthesized.astype(np.int16)
+    synthesized = world.synthesize(f0, spectral_env_array, ap, fs)
     out_wav_path = wav_path.replace('.wav', '_resynthesized.wav')
     wavfile.write(out_wav_path, fs, synthesized)
 

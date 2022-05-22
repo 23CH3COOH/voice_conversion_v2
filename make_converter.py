@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import pysptk
+from scipy.io import wavfile
 from load_settings import load_settings
 from align_mcep import align_mcep
 from train_gmm import train_gmm
@@ -37,11 +38,13 @@ class ConverterMaker:
 
     def __extract_spectral_envelope(self):
         for file in self.__train_files:
-            wave_path = wav_s % self.__from + wavf_s % file
-            sp = extract_sp(wave_path, self.__fft_size)
+            wav_path = wav_s % self.__from + wavf_s % file
+            fs, data = wavfile.read(wav_path)
+            sp = extract_sp(fs, data, self.__fft_size)
             self.__sp_from.append(sp)
-            wave_path = wav_s % self.__to + wavf_s % file
-            sp = extract_sp(wave_path, self.__fft_size)
+            wav_path = wav_s % self.__to + wavf_s % file
+            fs, data = wavfile.read(wav_path)
+            sp = extract_sp(fs, data, self.__fft_size)
             self.__sp_to.append(sp)
 
     def __convert_mcep(self):
@@ -59,7 +62,7 @@ class ConverterMaker:
             mcep_aligned_from, mcep_aligned_to = align_mcep(mcep_from, mcep_to)
             self.__mcep_aligned_from.append(mcep_aligned_from)
             self.__mcep_aligned_to.append(mcep_aligned_to)
-        
+
     def __train_gmm(self):
         assert len(self.__mcep_aligned_from) == len(self.__mcep_aligned_to)
         outdir = train_ss % (self.__from, self.__to)
@@ -82,5 +85,5 @@ class ConverterMaker:
 
 
 if __name__ == '__main__':
-    converter_maker = ConverterMaker('clb', 'slt')
+    converter_maker = ConverterMaker('', '')
     converter_maker.run()
