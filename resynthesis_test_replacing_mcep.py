@@ -4,18 +4,14 @@ import numpy as np
 import pysptk
 import pyworld
 from scipy.io import wavfile
-from align_mcep import align_mcep, align_mcep_dummy
+from world import extract_f0_sp_ap
 
 
-def extract_f0_sp_ap(wav_path, FFT_SIZE):
-    fs, data = wavfile.read(wav_path)
-    data = data.astype(np.float)
-    _f0, time = pyworld.dio(data, fs)
-    f0 = pyworld.stonemask(data, _f0, time, fs)
-    sp = pyworld.cheaptrick(data, f0, time, fs, fft_size=FFT_SIZE)
-    ap = pyworld.d4c(data, _f0, time, fs, fft_size=FFT_SIZE)
-    return f0, sp, ap
-
+'''
+wav_path_fromの基本周波数と非周期性指標、wav_path_toのスペクトル包絡から
+音声を再合成する。但し、wav_path_fromとwav_path_toで時間同期は取らない。
+（時間同期を取るとフレーム数が変わってしまい、元のと揃えるのが難しいため。）
+'''
 def resynthesis(wav_path_from, wav_path_to, out_wav_path, m, a, fs, FFT_SIZE):
     print('...Extracting by WORLD...')
     f0_from, sp_from, ap_from = extract_f0_sp_ap(wav_path_from, FFT_SIZE)
@@ -24,15 +20,10 @@ def resynthesis(wav_path_from, wav_path_to, out_wav_path, m, a, fs, FFT_SIZE):
     assert ap_to.shape == ap_from.shape
 
     print('...Converting spectral envelope to mel cepstrum...')
-    mcep_from = pysptk.sp2mc(sp_from, order=m, alpha=a)
     mcep_to = pysptk.sp2mc(sp_to, order=m, alpha=a)
 
-    print('...Aligning mel cepstrum...')
-    mcep_aligned_from, mcep_aligned_to = align_mcep_dummy(mcep_from, mcep_to)
-    assert mcep_aligned_from.shape == mcep_aligned_to.shape
-
     print('...Converting mel cepstrum to spectral envelope...')
-    sp_recalc_to = pysptk.mc2sp(mcep_aligned_to, alpha=a, fftlen=FFT_SIZE)
+    sp_recalc_to = pysptk.mc2sp(mcep_to, alpha=a, fftlen=FFT_SIZE)
     assert sp_recalc_to.shape == sp_from.shape
 
     print('...Synthesizing...')
