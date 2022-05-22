@@ -1,0 +1,11 @@
+!.gitkeep
+/__pycache__
+/wav/train/*/*.wav
+/wav/production/*/*.wav
+/train_result/*/*.png
+/train_result/*/*.gmm
+/train_result/*/*.npy
+/resynthesis_test/*.wav
+/resynthesis_test_replacing_mcep/from/*.wav
+/resynthesis_test_replacing_mcep/to/*.wav
+/resynthesis_test_replacing_mcep/output/*.wav
