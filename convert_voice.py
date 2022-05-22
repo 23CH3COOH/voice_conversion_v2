@@ -69,10 +69,10 @@ def convert_voice(wav_path_from, wav_path_to, gmm_path, m, a, K, FFT_SIZE):
 def main(conv_from, conv_to):
     gmm_path = train_ss % (conv_from, conv_to) + gmm_file
     if not os.path.exists(gmm_path):
-        print('Not train result.')
+        print('Not found train result.')
         return
 
-    m, a, K, FFT_SIZE = load_settings()
+    m, a, K, FFT_SIZE = load_settings(conv_from, conv_to)
     if not os.path.exists(wav_s % conv_to):
         os.makedirs(wav_s % conv_to)
 

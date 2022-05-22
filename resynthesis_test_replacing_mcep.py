@@ -31,14 +31,14 @@ def resynthesis(wav_path_from, wav_path_to, out_wav_path, m, a, FFT_SIZE):
     print('...Synthesizing...')
     synthesized = world.synthesize(f0_from, sp_recalc_to, ap_from, fs)
     wavfile.write(out_wav_path, fs, synthesized)
-
+    
 
 if __name__ == '__main__':
     input_from = 'resynthesis_test_replacing_mcep/from/'
     input_to = 'resynthesis_test_replacing_mcep/to/'
     output = 'resynthesis_test_replacing_mcep/output/'
     m = 25
-    a = 0.58
+    a = 0.42
     FFT_SIZE = 1024
 
     for file_name in os.listdir(input_from):

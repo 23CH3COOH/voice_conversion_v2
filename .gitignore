@@ -2,6 +2,7 @@
 /__pycache__
 /wav/train/*/*.wav
 /wav/production/*/*.wav
+/settings/*/parameters.txt
 /train_result/*/*.png
 /train_result/*/*.gmm
 /train_result/*/*.npy

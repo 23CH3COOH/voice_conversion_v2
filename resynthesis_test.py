@@ -29,7 +29,7 @@ def resynthesis(wav_path, m, a, FFT_SIZE):
 if __name__ == '__main__':
     audio_folder = 'resynthesis_test/'
     m = 25
-    a = 0.58
+    a = 0.42
     FFT_SIZE = 1024
     for wav_path in glob(audio_folder + '*.wav'):
         if '_resynthesized.wav' in wav_path:

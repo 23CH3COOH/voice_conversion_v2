@@ -1,8 +1,19 @@
 # -*- coding: utf-8 -*-
+import os
 
 
-def load_settings(settings_file_path='settings.txt'):
-    f = open(settings_file_path)
+def load_settings(conv_from, conv_to):
+    m = 25
+    a = 0.42
+    K = 32
+    fft_size = 1024
+    
+    path = 'settings/%s_to_%s/parameters.txt' % (conv_from, conv_to)
+    if not os.path.exists(path):
+        print('Not found settings file so apply default settings.')
+        return m, a, K, fft_size
+
+    f = open(path)
     rows = f.readlines()
     f.close()
 

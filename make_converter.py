@@ -26,7 +26,8 @@ class ConverterMaker:
         self.__mcep_aligned_to = list()
 
     def __load_settings(self):
-        self.__m, self.__a, self.__K, self.__fft_size = load_settings()
+        self.__m, self.__a, self.__K, self.__fft_size = load_settings(
+            self.__from, self.__to)
 
     def __search_common_wav_files(self):
         wav_files_from = os.listdir(wav_s % self.__from)
