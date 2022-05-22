@@ -4,7 +4,7 @@ import numpy as np
 import pysptk
 import pyworld
 from scipy.io import wavfile
-from world import extract_f0_sp_ap
+from world import extract_f0_sp_ap, synthesize
 
 
 '''
@@ -27,8 +27,7 @@ def resynthesis(wav_path_from, wav_path_to, out_wav_path, m, a, fs, FFT_SIZE):
     assert sp_recalc_to.shape == sp_from.shape
 
     print('...Synthesizing...')
-    synthesized = pyworld.synthesize(f0_from, sp_recalc_to, ap_from, fs)
-    synthesized = synthesized.astype(np.int16)
+    synthesized = world.synthesize(f0_from, sp_recalc_to, ap_from, fs)
     wavfile.write(out_wav_path, fs, synthesized)
     
 

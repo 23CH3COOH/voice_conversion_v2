@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import pysptk
+from load_settings import load_settings
 from align_mcep import align_mcep
 from train_gmm import train_gmm
 from world import extract_sp
@@ -8,8 +9,6 @@ from world import extract_sp
 
 wav_s = 'wav/train/%s/'
 train_ss = 'train_result/%s_to_%s/'
-
-settings_file = 'settings.txt'
 wavf_s = '%s.wav'
 
 class ConverterMaker:
@@ -26,21 +25,7 @@ class ConverterMaker:
         self.__mcep_aligned_to = list()
 
     def __load_settings(self):
-        f = open(settings_file)
-        rows = f.readlines()
-        f.close()
-
-        parsed = dict()
-        for row in rows:
-            if '#' in row or not '=' in row:
-                continue
-            splited = row.split('=')
-            parsed[splited[0]] = splited[1].strip()
-
-        self.__m = int(parsed['m'])
-        self.__a = float(parsed['a'])
-        self.__K = int(parsed['K'])
-        self.__fft_size = int(parsed['fft_size'])
+        self.__m, self.__a, self.__K, self.__fft_size = load_settings()
 
     def __search_common_wav_files(self):
         wav_files_from = os.listdir(wav_s % self.__from)
