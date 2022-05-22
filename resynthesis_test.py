@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
-import numpy as np
 import pysptk
 from glob import glob
 from scipy.io import wavfile
 import world
 
 
+'''
+wav_pathから基本周波数とスペクトル包絡と非周期性指標を抽出し、音声を再合成する。
+但し、スペクトル包絡は一旦メルケプストラムに変換し、再度スペクトル包絡に戻す。
+'''
 def resynthesis(wav_path, m, a, FFT_SIZE):
     print('Extracting by WORLD...')
     fs, data = wavfile.read(wav_path)

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import numpy as np
 import pysptk
 from scipy.io import wavfile
 import world
