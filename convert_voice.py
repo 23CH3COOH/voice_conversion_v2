@@ -83,4 +83,4 @@ def main(conv_from, conv_to):
 
 
 if __name__ == '__main__':
-    main('', '')
+    main('hatsune', 'riko')

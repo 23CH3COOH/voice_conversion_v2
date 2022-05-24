@@ -6,11 +6,15 @@ from load_settings import load_settings
 from align_mcep import align_mcep
 from train_gmm import train_gmm
 from world import extract_sp
+from drawing_tools import draw_heatmap
 
 
 wav_s = 'wav/train/%s/'
+aligned_mcep_map_sss = 'mcep_aligned/%s_to_%s/%s/'
 train_ss = 'train_result/%s_to_%s/'
 wavf_s = '%s.wav'
+imgf_s = '%s.png'
+mc_title_dd = 'Aligned mel cepstrum (%d dimensions * %d frames)'
 
 class ConverterMaker:
     def __init__(self, conv_from, conv_to, output_visible_form=True):
@@ -64,6 +68,23 @@ class ConverterMaker:
             self.__mcep_aligned_from.append(mcep_aligned_from)
             self.__mcep_aligned_to.append(mcep_aligned_to)
 
+    def __output_aligned_mcep_to_heatmap(self):
+        outdir = aligned_mcep_map_sss % (self.__from, self.__to, self.__from)
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
+        for mcep, file in zip(self.__mcep_aligned_from, self.__train_files):
+            draw_heatmap(mcep.T,
+                         outdir + imgf_s % file,
+                         mc_title_dd % (mcep.shape[1], mcep.shape[0]))
+
+        outdir = aligned_mcep_map_sss % (self.__from, self.__to, self.__to)
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
+        for mcep, file in zip(self.__mcep_aligned_to, self.__train_files):
+            draw_heatmap(mcep.T,
+                         outdir + imgf_s % file,
+                         mc_title_dd % (mcep.shape[1], mcep.shape[0]))
+
     def __train_gmm(self):
         assert len(self.__mcep_aligned_from) == len(self.__mcep_aligned_to)
         outdir = train_ss % (self.__from, self.__to)
@@ -81,6 +102,8 @@ class ConverterMaker:
         self.__convert_mcep()
         print('Aligning mel cepstrum...')
         self.__align_mcep()
+        if self.__output_visible_form:
+            self.__output_aligned_mcep_to_heatmap()
         print('Training...')
         self.__train_gmm()
 
