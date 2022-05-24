@@ -3,9 +3,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-def draw_transition(array, outpath, title, xlabel='frame', ylabel=''):
+def draw_transition(array, outpath, title, xlabel='frame', ylabel='', lw=0.1):
     fig = plt.figure(figsize=(7.2, 5.4))
-    plt.plot(array)
+    plt.plot(array, linewidth=lw)
     plt.grid()
     plt.title(title)
     plt.xlabel(xlabel)
