@@ -5,12 +5,14 @@ import numpy as np
 from scipy.io import wavfile
 from load_settings import load_settings
 from align_mcep import align_mcep
+from remove_frames import remove_constant_frames, remove_abnormally_low_frames
 from train_gmm import train_gmm
 from world import extract_sp
 from drawing_tools import draw_heatmap
 
 
 wav_s = 'wav/train/%s/'
+aligned_mcep_ss = 'mcep_aligned/%s_to_%s/'
 aligned_mcep_sss = 'mcep_aligned/%s_to_%s/%s/'
 train_ss = 'train_result/%s_to_%s/'
 wavf_s = '%s.wav'
@@ -89,6 +91,23 @@ class ConverterMaker:
                          outdir + imgf_s % file,
                          mc_title_dd % (mcep.shape[1], mcep.shape[0]))
 
+    def __remove_noise_from_aligned_mcep(self):
+        log_dir = aligned_mcep_ss % (self.__from, self.__to)
+        log_file = open(log_dir + 'remove_frames.txt', 'w')
+
+        for i in range(len(self.__train_files)):
+            v = self.__mcep_aligned_from[i]
+            w = self.__mcep_aligned_to[i]
+            v, w, remove_frames_1 = remove_constant_frames(v, w)
+            v, w, remove_frames_2 = remove_abnormally_low_frames(v, w, -16)
+            self.__mcep_aligned_from[i] = v
+            self.__mcep_aligned_to[i] = w
+
+            log_file.write(self.__train_files[i] + '\n')
+            log_file.write('constrant:' + str(remove_frames_1) + '\n')
+            log_file.write('abnormally small:' + str(remove_frames_2) + '\n')
+        log_file.close()
+
     def __train_gmm(self):
         assert len(self.__mcep_aligned_from) == len(self.__mcep_aligned_to)
         outdir = train_ss % (self.__from, self.__to)
@@ -108,6 +127,8 @@ class ConverterMaker:
         self.__align_mcep()
         if self.__output_visible_form:
             self.__output_aligned_mcep()
+        print('Removing noise from aligned mel cepstrum...')
+        self.__remove_noise_from_aligned_mcep()
         print('Training...')
         self.__train_gmm()
 
