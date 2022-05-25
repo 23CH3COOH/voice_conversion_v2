@@ -3,20 +3,22 @@ import os
 import pysptk
 from scipy.io import wavfile
 import world
+from drawing_tools import draw_transition
 
+
+wav_title_d = 'Wav signal (%d frames)'
 
 '''
 wav_path_fromの基本周波数と非周期性指標、wav_path_toのスペクトル包絡から
 音声を再合成する。但し、wav_path_fromとwav_path_toで時間同期は取らない。
 （時間同期を取るとフレーム数が変わってしまい、元のと揃えるのが難しいため。）
 '''
-def resynthesis(wav_path_from, wav_path_to, out_wav_path, m, a, FFT_SIZE):
+def resynthesis(wav_path_from, wav_path_to, out_wav_path, m, a, FFT_SIZE, r):
     print('...Extracting by WORLD...')
-    print(wav_path_from)
     fs, data = wavfile.read(wav_path_from)
-    f0_from, sp_from, ap_from = world.extract_f0_sp_ap(fs, data, FFT_SIZE)
+    f0_from, sp_from, ap_from = world.extract_f0_sp_ap(fs, data, FFT_SIZE, r)
     fs, data = wavfile.read(wav_path_to)
-    f0_to, sp_to, ap_to = world.extract_f0_sp_ap(fs, data, FFT_SIZE)
+    f0_to, sp_to, ap_to = world.extract_f0_sp_ap(fs, data, FFT_SIZE, r)
     assert sp_to.shape == sp_from.shape
     assert ap_to.shape == ap_from.shape
 
@@ -30,7 +32,10 @@ def resynthesis(wav_path_from, wav_path_to, out_wav_path, m, a, FFT_SIZE):
     print('...Synthesizing...')
     synthesized = world.synthesize(f0_from, sp_recalc_to, ap_from, fs)
     wavfile.write(out_wav_path, fs, synthesized)
-    
+    draw_transition(synthesized,
+                    out_wav_path.replace('.wav', '.png'),
+                    wav_title_d % synthesized.size)
+
 
 if __name__ == '__main__':
     input_from = 'resynthesis_test_replacing_mcep/from/'
@@ -39,6 +44,7 @@ if __name__ == '__main__':
     m = 25
     a = 0.42
     FFT_SIZE = 1024
+    ratio = 0.5
 
     for file_name in os.listdir(input_from):
         if not '.wav' in file_name:
@@ -49,4 +55,4 @@ if __name__ == '__main__':
         path_from = input_from + file_name
         output_path = output + file_name
         print('Start resynthesize: %s' % file_name)
-        resynthesis(path_from, path_to, output_path, m, a, FFT_SIZE)
+        resynthesis(path_from, path_to, output_path, m, a, FFT_SIZE, ratio)

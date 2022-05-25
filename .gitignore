@@ -13,3 +13,4 @@
 /resynthesis_test_replacing_mcep/from/*.wav
 /resynthesis_test_replacing_mcep/to/*.wav
 /resynthesis_test_replacing_mcep/output/*.wav
+/resynthesis_test_replacing_mcep/output/*.png
