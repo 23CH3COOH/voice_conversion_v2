@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import pysptk
+import numpy as np
 from scipy.io import wavfile
 from load_settings import load_settings
 from align_mcep import align_mcep
@@ -10,10 +11,11 @@ from drawing_tools import draw_heatmap
 
 
 wav_s = 'wav/train/%s/'
-aligned_mcep_map_sss = 'mcep_aligned/%s_to_%s/%s/'
+aligned_mcep_sss = 'mcep_aligned/%s_to_%s/%s/'
 train_ss = 'train_result/%s_to_%s/'
 wavf_s = '%s.wav'
 imgf_s = '%s.png'
+txtf_s = '%s.txt'
 mc_title_dd = 'Aligned mel cepstrum (%d dimensions * %d frames)'
 
 class ConverterMaker:
@@ -68,19 +70,21 @@ class ConverterMaker:
             self.__mcep_aligned_from.append(mcep_aligned_from)
             self.__mcep_aligned_to.append(mcep_aligned_to)
 
-    def __output_aligned_mcep_to_heatmap(self):
-        outdir = aligned_mcep_map_sss % (self.__from, self.__to, self.__from)
+    def __output_aligned_mcep(self):
+        outdir = aligned_mcep_sss % (self.__from, self.__to, self.__from)
         if not os.path.exists(outdir):
             os.makedirs(outdir)
         for mcep, file in zip(self.__mcep_aligned_from, self.__train_files):
+            np.savetxt(outdir + txtf_s % file, mcep, fmt='%.6f')
             draw_heatmap(mcep.T,
                          outdir + imgf_s % file,
                          mc_title_dd % (mcep.shape[1], mcep.shape[0]))
 
-        outdir = aligned_mcep_map_sss % (self.__from, self.__to, self.__to)
+        outdir = aligned_mcep_sss % (self.__from, self.__to, self.__to)
         if not os.path.exists(outdir):
             os.makedirs(outdir)
         for mcep, file in zip(self.__mcep_aligned_to, self.__train_files):
+            np.savetxt(outdir + txtf_s % file, mcep, fmt='%.6f')
             draw_heatmap(mcep.T,
                          outdir + imgf_s % file,
                          mc_title_dd % (mcep.shape[1], mcep.shape[0]))
@@ -103,7 +107,7 @@ class ConverterMaker:
         print('Aligning mel cepstrum...')
         self.__align_mcep()
         if self.__output_visible_form:
-            self.__output_aligned_mcep_to_heatmap()
+            self.__output_aligned_mcep()
         print('Training...')
         self.__train_gmm()
 

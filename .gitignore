@@ -3,6 +3,7 @@
 /wav/train/*/*.wav
 /wav/production/*/*.wav
 /settings/*/parameters.txt
+/mcep_aligned/*/*/*.txt
 /mcep_aligned/*/*/*.png
 /train_result/*/*.png
 /train_result/*/*.gmm
