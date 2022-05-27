@@ -13,8 +13,6 @@ def make_joint_vectors(aligned_mcep_list_1, aligned_mcep_list_2, dim):
 
     # mcepファイルをロード
     for mcep_1, mcep_2 in zip(aligned_mcep_list_1, aligned_mcep_list_2):
-##        if exclude_both_ends_flag:
-##            mcep_1, mcep_2 = exclude_both_ends(mcep_1, mcep_2)
         X = np.vstack((X, mcep_1))
         Y = np.vstack((Y, mcep_2))
 

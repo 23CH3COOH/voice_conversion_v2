@@ -21,10 +21,11 @@ txtf_s = '%s.txt'
 mc_title_dd = 'Aligned mel cepstrum (%d dimensions * %d frames)'
 
 class ConverterMaker:
-    def __init__(self, conv_from, conv_to, output_visible_form=True):
+    def __init__(self, conv_from, conv_to, visible_out=True, rm_noise=False):
         self.__from = conv_from
         self.__to = conv_to
-        self.__output_visible_form = output_visible_form
+        self.__output_visible_form = visible_out
+        self.__remove_noise_frames = rm_noise
         self.__train_files = list()
         self.__sp_from = list()
         self.__sp_to = list()
@@ -127,8 +128,9 @@ class ConverterMaker:
         self.__align_mcep()
         if self.__output_visible_form:
             self.__output_aligned_mcep()
-        print('Removing noise from aligned mel cepstrum...')
-        self.__remove_noise_from_aligned_mcep()
+        if self.__remove_noise_frames:
+            print('Removing noise from aligned mel cepstrum...')
+            self.__remove_noise_from_aligned_mcep()
         print('Training...')
         self.__train_gmm()
 

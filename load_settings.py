@@ -7,6 +7,7 @@ def load_settings(conv_from, conv_to):
     if not os.path.exists(path):
         path = 'settings/default_parameters.txt'
         assert os.path.exists(path)
+        print('Not found settings file so applying default settings.')
     f = open(path)
     rows = f.readlines()
     f.close()
