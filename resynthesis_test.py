@@ -17,7 +17,7 @@ wav_title_d = 'Wav signal (%d frames)'
 wav_pathから基本周波数とスペクトル包絡と非周期性指標を抽出し、音声を再合成する。
 但し、スペクトル包絡は一旦メルケプストラムに変換し、再度スペクトル包絡に戻す。
 '''
-def resynthesis(wav_path, m, a, FFT_SIZE, ratio=1.0):
+def resynthesis(wav_path, m, a, FFT_SIZE, ratio=1.0, constant_pitch=None):
     print('...Extracting by WORLD...')
     fs, data = wavfile.read(wav_path)
     f0, sp, ap = world.extract_f0_sp_ap(fs, data, FFT_SIZE, ratio)
@@ -54,6 +54,8 @@ def resynthesis(wav_path, m, a, FFT_SIZE, ratio=1.0):
                  sp_title_dd % (sp_r.shape[1], sp_r.shape[0]))
 
     print('...Synthesizing...')
+    if constant_pitch is not None:
+        f0 = np.ones_like(f0) * float(constant_pitch)
     synthesized = world.synthesize(f0, sp_r, ap, fs)
     out_wav_path = wav_path.replace('.wav', '_resynthesized.wav')
     wavfile.write(out_wav_path, fs, synthesized)
@@ -75,4 +77,4 @@ if __name__ == '__main__':
         if '_resynthesized.wav' in wav_path:
             continue
         print('Start resynthesize: %s' % wav_path)
-        resynthesis(wav_path, m, a, FFT_SIZE, ratio=0.5)
+        resynthesis(wav_path, m, a, FFT_SIZE)

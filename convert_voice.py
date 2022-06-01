@@ -54,7 +54,8 @@ def convert_mcep(mcep, gmm, m, K):
     for t in range(len(mcep)):
         res[t] = convert_frame(mcep[t], gmm, gauss, ss, m, K)
 
-    assert np.all(np.isfinite(res))
+    if np.any(np.nan(res)):
+        print('Warning: Exist invalid value in converting mcep.')
     return res
 
 def convert_voice(wav_path_from, wav_path_to, gmm_path, m, a, K, FFT_SIZE):
@@ -83,4 +84,4 @@ def main(conv_from, conv_to):
 
 
 if __name__ == '__main__':
-    main('hatsune', 'riko')
+    main('', '')
